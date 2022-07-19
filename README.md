@@ -38,7 +38,8 @@ flask run
 ### PowerShell (Windows)
 ```shell
 $env:FLASK_APP = "run"
-$env:FLASK_ENV = "development"
+$env:
+FLASK_ENV = "development"
 flask run
 ```
 

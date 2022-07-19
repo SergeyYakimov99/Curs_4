@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class BaseConfig:
     SECRET_KEY = os.getenv('SECRET_KEY', 'you-will-never-guess')
+    ALGORITHM = 'HS256'
     JSON_AS_ASCII = False
 
     ITEMS_PER_PAGE = 12
@@ -41,18 +42,18 @@ class ProductionConfig(BaseConfig):
     # TODO: дополнить конфиг
 
 
-class ConfigFactory:
-    flask_env = os.getenv('FLASK_ENV')
-
-    @classmethod
-    def get_config(cls) -> Type[BaseConfig]:
-        if cls.flask_env == 'development':
-            return DevelopmentConfig
-        elif cls.flask_env == 'production':
-            return ProductionConfig
-        elif cls.flask_env == 'testing':
-            return TestingConfig
-        raise NotImplementedError
-
-
-config = ConfigFactory.get_config()
+# class ConfigFactory:
+#     flask_env = os.getenv('FLASK_ENV')
+#
+#     @classmethod
+#     def get_config(cls) -> Type[BaseConfig]:
+#         if cls.flask_env == 'development':
+#             return DevelopmentConfig
+#         elif cls.flask_env == 'production':
+#             return ProductionConfig
+#         elif cls.flask_env == 'testing':
+#             return TestingConfig
+#         raise NotImplementedError
+#
+#
+# config = ConfigFactory.get_config()

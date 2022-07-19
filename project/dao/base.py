@@ -19,8 +19,10 @@ class BaseDAO(Generic[T]):
     def _items_per_page(self) -> int:
         return current_app.config['ITEMS_PER_PAGE']
 
+
     def get_by_id(self, pk: int) -> Optional[T]:
         return self._db_session.query(self.__model__).get(pk)
+
 
     def get_all(self, page: Optional[int] = None) -> List[T]:
         stmt: BaseQuery = self._db_session.query(self.__model__)
@@ -30,3 +32,21 @@ class BaseDAO(Generic[T]):
             except NotFound:
                 return []
         return stmt.all()
+
+
+    def create(self, user_data):
+        """
+        Добавляем нового пользователя в БД
+        """
+
+        entity = self.__model__(**user_data)
+        self._db_session.add(entity)
+        self._db_session.commit()
+
+    # def update(self, user_data):
+    #     uid = user_data.get('id')
+    #     user = self.get_by_id(uid)
+    #     user.password = user_data.get('password')
+    #
+    #     self._db_session.add(user)
+    #     self._db_session.commit()
