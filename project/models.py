@@ -10,8 +10,6 @@ class Genre(models.Base):
     name = Column(String(100), unique=True, nullable=False)
 
 
-# добавил сам
-
 class Director(models.Base):
     __tablename__ = 'director'
     name = Column(String(100), unique=True, nullable=False)
@@ -19,23 +17,22 @@ class Director(models.Base):
 
 class Movie(models.Base):
     __tablename__ = 'movie'
-    title = Column(String(100), nullable=False)
-    description = Column(String(250), nullable=False)
-    trailer = Column(String(100), nullable=False)
+    title = Column(String(100), unique=True, nullable=False)
+    description = Column(String(250), unique=True, nullable=False)
+    trailer = Column(String(100), unique=True, nullable=False)
     year = Column(Integer(), nullable=False)
     rating = Column(Float(), nullable=False)
     genre_id = Column(Integer(), ForeignKey('genre.id'), nullable=False)
-    genre = relationship('Genre', foreign_keys=genre_id)   # ???
+    genre = relationship("Genre")
     director_id = Column(Integer(), ForeignKey('director.id'), nullable=False)
-    director = relationship('Director', foreign_keys=director_id)  # ???
+    director = relationship("Director")
 
 
 class User(models.Base):
     __tablename__ = 'user'
     email = Column(String(100), unique=True, nullable=False)
-    password = Column(String(100), nullable=False)
+    password = Column(String(200), nullable=False)
     name = Column(String(100))
     surname = Column(String(100))
-    favorite_genre_id = Column(Integer(), ForeignKey('genre.id'))
-    favorite_genre = relationship('favorite_genre', foreign_keys=favorite_genre_id)
-
+    favorite_genre = Column(Integer(), ForeignKey('genre.id'))
+    genre = relationship("Genre")
