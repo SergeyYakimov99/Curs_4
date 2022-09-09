@@ -1,0 +1,52 @@
+name: home_work_26
+on: [ push ]
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: docker build
+        run: docker build -t naborslov/home_work_26:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: docker_push
+        run: docker push naborslov/home_work_26:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      FLASK_ENV: ${{ secrets.FLASK_ENV }}
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+#      - name: render config
+#        run: |
+#          mkdir deploy
+#          mkdir deploy/code
+#          mkdir deploy/code/project
+#          cat config-server.py | envsubst > deploy/code/project/config.py
+#          cp docker-compose.yaml deploy/code
+      - name: clone files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "code/docker-compose.yaml"
+          target: "home_work_26"
+#          strip_components: 1
+      - name: run docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+              cd home_work_26
+              cd code
+              echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
